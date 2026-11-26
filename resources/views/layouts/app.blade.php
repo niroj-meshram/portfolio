@@ -77,7 +77,7 @@
 
     {{-- Without JavaScript, scroll-reveal content would stay at opacity 0 --}}
     <noscript>
-        <style>.reveal, .reveal-left, .reveal-right { opacity: 1 !important; transform: none !important; }</style>
+        <style>.reveal { opacity: 1 !important; transform: none !important; }</style>
     </noscript>
     @yield('head')
 </head>
@@ -85,23 +85,15 @@
 <body class="antialiased overflow-x-hidden" style="background-color:#0B1120;color:#F9FAFB;">
 
     {{-- ── Scroll Progress Bar ───────────────────────────────────────── --}}
-    <div id="scroll-progress" class="fixed top-0 left-0 h-0.75 z-200 pointer-events-none"
-        style="width:0%;background:linear-gradient(90deg,#14B8A6,#3B82F6,#8B5CF6);"></div>
-
-    {{-- ── Mouse Follow Glow ────────────────────────────────────────── --}}
-    <div id="mouse-glow" class="fixed pointer-events-none z-0 hidden lg:block"
-        style="width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(20,184,166,0.055) 0%,transparent 68%);transform:translate(-50%,-50%);left:-9999px;top:-9999px;">
-    </div>
-
-    {{-- ── Particle Canvas ──────────────────────────────────────────── --}}
-    <canvas id="particles-canvas" class="fixed inset-0 pointer-events-none z-0" style="opacity:0.35;"></canvas>
+    <div id="scroll-progress" class="fixed top-0 left-0 h-0.5 z-200 pointer-events-none" aria-hidden="true"
+        style="width:0%;background:linear-gradient(90deg,#14B8A6,#3B82F6);"></div>
 
     {{-- ── Navbar ───────────────────────────────────────────────────── --}}
     @include('partials.navbar')
 
     {{-- ── Page Content ─────────────────────────────────────────────── --}}
-    {{-- overflow-x-clip: off-screen reveal offsets (e.g. .reveal-right starts 56px right) must not
-         widen the mobile layout viewport, which would push the fixed navbar past the screen edge --}}
+    {{-- overflow-x-clip: nothing in a section may widen the mobile layout viewport, which would push
+         the fixed navbar past the screen edge --}}
     <main class="overflow-x-clip">
         @yield('content')
     </main>

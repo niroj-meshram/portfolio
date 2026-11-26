@@ -47,7 +47,7 @@ html.lenis body { height: auto; }
         color: #F9FAFB;
     }
 
-    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #111827; }
     ::-webkit-scrollbar-thumb {
         background: linear-gradient(to bottom, #14B8A6, #3B82F6);
@@ -57,33 +57,99 @@ html.lenis body { height: auto; }
 
 /* Custom component classes live in the components layer so Tailwind utilities can
    override them. Unlayered rules beat every layered utility in Tailwind v4, which
-   previously made `hidden sm:inline-flex btn-primary` ignore `hidden` on mobile. */
+   previously made `hidden sm:inline-flex btn-primary` ignore `hidden` on mobile.
+
+   Design system (Phase 3): one surface style, one section rhythm, one heading pattern,
+   two button styles, neutral chips. Decoration is limited to the hero background. */
 @layer components {
-    /* ─── Glassmorphism ─────────────────────────────────────────────────────────── */
+    /* ─── Section rhythm and headings ─────────────────────────────────────── */
+    .section {
+        padding-block: 4rem;
+    }
+    @media (min-width: 640px)  { .section { padding-block: 5rem; } }
+    @media (min-width: 1024px) { .section { padding-block: 6.5rem; } }
+
+    .section-head {
+        max-width: 42rem;
+        margin-bottom: 2.5rem;
+    }
+    @media (min-width: 1024px) { .section-head { margin-bottom: 3.5rem; } }
+
+    .section-eyebrow {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #2DD4BF;
+    }
+
+    .section-title {
+        font-family: var(--font-heading);
+        font-size: 1.875rem;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        color: #fff;
+    }
+    @media (min-width: 640px)  { .section-title { font-size: 2.25rem; } }
+    @media (min-width: 1024px) { .section-title { font-size: 2.5rem; } }
+
+    .section-lead {
+        margin-top: 0.875rem;
+        font-size: 1.0625rem;
+        line-height: 1.7;
+        color: #9CA3AF;
+    }
+
+    /* Small uppercase label used for sub-groups, definition terms and card meta */
+    .meta-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9CA3AF;
+    }
+
+    .card-title {
+        font-family: var(--font-heading);
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.3;
+        color: #fff;
+    }
+
+    /* ─── Surfaces ────────────────────────────────────────────────────────── */
+    /* Navbar / mobile menu: translucent with blur so content scrolls underneath */
     .glass {
-        background: rgba(17, 24, 39, 0.75);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: rgba(17, 24, 39, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(55, 65, 81, 0.5);
     }
 
-    .glass-card {
-        background: rgba(31, 41, 55, 0.5);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(55, 65, 81, 0.4);
+    /* Content cards: static (they are not links, so no hover lift) */
+    .glass-card,
+    .project-card {
+        background: rgba(31, 41, 55, 0.45);
+        border: 1px solid rgba(55, 65, 81, 0.55);
         border-radius: 1rem;
-        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .glass-card:hover {
-        background: rgba(31, 41, 55, 0.75);
-        border-color: rgba(20, 184, 166, 0.35);
-        box-shadow: 0 0 50px rgba(20, 184, 166, 0.07), 0 25px 60px rgba(0, 0, 0, 0.45);
-        transform: translateY(-5px);
+    .project-card {
+        display: flex;
+        flex-direction: column;
     }
 
-    /* ─── Typography / Gradients ────────────────────────────────────────────────── */
+    /* Inset panel inside a card (e.g. platform stack items) */
+    .panel {
+        background: rgba(17, 24, 39, 0.6);
+        border: 1px solid rgba(55, 65, 81, 0.5);
+        border-radius: 0.75rem;
+    }
+
+    /* ─── Typography ──────────────────────────────────────────────────────── */
     .gradient-text {
         background: linear-gradient(135deg, #14B8A6 0%, #3B82F6 100%);
         -webkit-background-clip: text;
@@ -91,13 +157,7 @@ html.lenis body { height: auto; }
         background-clip: text;
     }
 
-    .gradient-text-blue-purple {
-        background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
+    /* Used once: the hero name */
     .gradient-text-full {
         background: linear-gradient(135deg, #14B8A6 0%, #3B82F6 50%, #8B5CF6 100%);
         -webkit-background-clip: text;
@@ -105,55 +165,95 @@ html.lenis body { height: auto; }
         background-clip: text;
     }
 
-    /* ─── Buttons ──────────────────────────────────────────────────────────────── */
-    .btn-primary {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.75rem;
-        border-radius: 0.625rem;
-        font-weight: 600;
-        font-size: 0.9375rem;
-        color: #fff;
-        background: linear-gradient(135deg, #0F766E, #1D4ED8);
-        box-shadow: 0 4px 20px rgba(20, 184, 166, 0.3);
-        transition: all 0.3s ease;
-        border: none;
-        text-decoration: none;
-        cursor: pointer;
-        white-space: nowrap;
+    /* Bulleted lists inside cards */
+    .bullets > li {
+        position: relative;
+        padding-left: 1.125rem;
+    }
+    .bullets > li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.6em;
+        width: 0.375rem;
+        height: 0.375rem;
+        border-radius: 9999px;
+        background: #14B8A6;
     }
 
-    .btn-primary:hover {
-        box-shadow: 0 8px 35px rgba(20, 184, 166, 0.55);
-        transform: translateY(-2px);
-    }
-
+    /* ─── Buttons ─────────────────────────────────────────────────────────── */
+    .btn-primary,
     .btn-secondary {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.5rem;
-        padding: 0.75rem 1.75rem;
+        min-height: 3rem;
+        padding: 0.625rem 1.5rem;
         border-radius: 0.625rem;
+        border: 1px solid transparent;
         font-weight: 600;
         font-size: 0.9375rem;
-        color: #14B8A6;
-        background: transparent;
-        border: 1px solid rgba(20, 184, 166, 0.45);
-        transition: all 0.3s ease;
+        line-height: 1.25;
         text-decoration: none;
         cursor: pointer;
         white-space: nowrap;
+        transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
     }
 
+    /* Darker teal→blue so white text passes WCAG AA (white on #14B8A6 is only 2.5:1) */
+    .btn-primary {
+        color: #fff;
+        background: linear-gradient(135deg, #0F766E, #1D4ED8);
+        box-shadow: 0 4px 16px rgba(20, 184, 166, 0.2);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 24px rgba(20, 184, 166, 0.4); }
+
+    .btn-secondary {
+        color: #2DD4BF;
+        background: transparent;
+        border-color: rgba(20, 184, 166, 0.45);
+    }
     .btn-secondary:hover {
         background: rgba(20, 184, 166, 0.1);
         border-color: #14B8A6;
-        box-shadow: 0 0 25px rgba(20, 184, 166, 0.2);
-        transform: translateY(-2px);
     }
 
-    /* ─── Badges ──────────────────────────────────────────────────────────────── */
+    /* Compact variant for the navbar */
+    .btn-sm {
+        min-height: 2.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    /* Square icon link (social links), 44px touch target */
+    .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.625rem;
+        color: #9CA3AF;
+        background: rgba(31, 41, 55, 0.8);
+        border: 1px solid rgba(55, 65, 81, 0.6);
+        transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .icon-btn:hover { color: #fff; border-color: rgba(20, 184, 166, 0.5); }
+
+    /* Inline text link with an arrow */
+    .text-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        min-height: 2.75rem;
+        font-weight: 500;
+        color: #2DD4BF;
+        transition: color 0.2s ease;
+    }
+    .text-link:hover { color: #5EEAD4; }
+
+    /* ─── Badges and chips ────────────────────────────────────────────────── */
     .badge {
         display: inline-flex;
         align-items: center;
@@ -164,68 +264,98 @@ html.lenis body { height: auto; }
         font-weight: 500;
     }
 
-    .badge-teal  { background: rgba(20,184,166,0.1); border: 1px solid rgba(20,184,166,0.25); color: #14B8A6; }
-    .badge-blue  { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #60A5FA; }
-    .badge-purple{ background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25); color: #A78BFA; }
-    .badge-green { background: rgba(34,197,94,0.1);  border: 1px solid rgba(34,197,94,0.25);  color: #22C55E; }
+    .badge-teal    { background: rgba(20,184,166,0.1);  border: 1px solid rgba(20,184,166,0.3);  color: #2DD4BF; }
+    .badge-blue    { background: rgba(59,130,246,0.1);  border: 1px solid rgba(59,130,246,0.3);  color: #60A5FA; }
+    .badge-purple  { background: rgba(139,92,246,0.1);  border: 1px solid rgba(139,92,246,0.35); color: #A78BFA; }
+    .badge-green   { background: rgba(34,197,94,0.1);   border: 1px solid rgba(34,197,94,0.3);   color: #4ADE80; }
+    .badge-neutral { background: rgba(55,65,81,0.35);   border: 1px solid rgba(75,85,99,0.6);    color: #D1D5DB; }
+    /* AI-assisted: dashed outline, always with the text "AI-assisted" */
+    .badge-assisted { background: rgba(139,92,246,0.08); border: 1px dashed rgba(167,139,250,0.6); color: #C4B5FD; }
 
-    /* ─── Backgrounds ────────────────────────────────────────────────────────── */
+    /* Chips are labels, not controls: no hover state */
+    .skill-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.3125rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        line-height: 1.4;
+        background: rgba(31, 41, 55, 0.7);
+        border: 1px solid rgba(75, 85, 99, 0.55);
+        color: #D1D5DB;
+        white-space: nowrap;
+    }
+
+    /* AI-assisted work: dashed outline. Always paired with a visible text label, never the only signal. */
+    .skill-chip-assisted {
+        border-style: dashed;
+        border-color: rgba(167, 139, 250, 0.55);
+    }
+
+    /* ─── Hero background (the only decorative area) ──────────────────────── */
     .bg-mesh {
         background:
-            radial-gradient(ellipse at 15% 35%, rgba(20, 184, 166, 0.08) 0%, transparent 55%),
-            radial-gradient(ellipse at 85% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 55%),
-            radial-gradient(ellipse at 50% 85%, rgba(139, 92, 246, 0.07) 0%, transparent 55%);
+            radial-gradient(ellipse at 15% 30%, rgba(20, 184, 166, 0.09) 0%, transparent 55%),
+            radial-gradient(ellipse at 85% 15%, rgba(59, 130, 246, 0.08) 0%, transparent 55%);
     }
 
     .bg-grid {
         background-image:
-            linear-gradient(rgba(55, 65, 81, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(55, 65, 81, 0.1) 1px, transparent 1px);
+            linear-gradient(rgba(55, 65, 81, 0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(55, 65, 81, 0.08) 1px, transparent 1px);
         background-size: 64px 64px;
     }
 
-    /* ─── Navbar ──────────────────────────────────────────────────────────────── */
+    /* Static availability dot */
+    .avail-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 9999px;
+        background: #22C55E;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+    }
+
+    /* ─── Navbar ──────────────────────────────────────────────────────────── */
     .nav-scrolled {
         background: rgba(11, 17, 32, 0.92) !important;
-        backdrop-filter: blur(24px) !important;
-        -webkit-backdrop-filter: blur(24px) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
         border-bottom: 1px solid rgba(55, 65, 81, 0.4) !important;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3) !important;
     }
 
     .nav-link {
         position: relative;
+        padding-block: 0.625rem;
         color: #9CA3AF;
         font-size: 0.875rem;
         font-weight: 500;
-        transition: color 0.2s ease;
-        padding-bottom: 2px;
         text-decoration: none;
+        transition: color 0.2s ease;
     }
 
     .nav-link::after {
         content: '';
         position: absolute;
-        bottom: -2px;
+        bottom: 0.25rem;
         left: 0;
         width: 0;
         height: 2px;
-        background: linear-gradient(90deg, #14B8A6, #3B82F6);
+        background: #14B8A6;
         border-radius: 1px;
-        transition: width 0.3s ease;
+        transition: width 0.25s ease;
     }
 
     .nav-link:hover { color: #F9FAFB; }
-    .nav-link:hover::after { width: 100%; }
-    .nav-link.active { color: #14B8A6; }
+    .nav-link:hover::after,
     .nav-link.active::after { width: 100%; }
+    .nav-link.active { color: #2DD4BF; }
 
-    /* ─── Timeline ────────────────────────────────────────────────────────────── */
+    /* ─── Timeline (experience) ───────────────────────────────────────────── */
+    /* app.js scrubs --timeline-scale on the first .timeline-track. Hidden below 640px,
+       where the rail would only cost horizontal space. */
     .timeline-track {
         position: relative;
-    }
-
-    .timeline-track {
         --timeline-scale: 1;
     }
 
@@ -236,7 +366,7 @@ html.lenis body { height: auto; }
         top: 8px;
         height: calc(100% - 16px);
         width: 2px;
-        background: linear-gradient(to bottom, #14B8A6, #3B82F6, rgba(139, 92, 246, 0.1));
+        background: linear-gradient(to bottom, #14B8A6, rgba(59, 130, 246, 0.5), rgba(55, 65, 81, 0.3));
         border-radius: 1px;
         transform: scaleY(var(--timeline-scale));
         transform-origin: top center;
@@ -246,272 +376,47 @@ html.lenis body { height: auto; }
         width: 12px;
         height: 12px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #14B8A6, #3B82F6);
-        box-shadow: 0 0 12px rgba(20, 184, 166, 0.6);
+        background: #14B8A6;
+        box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.18);
         flex-shrink: 0;
         margin-top: 5px;
         position: relative;
         z-index: 1;
     }
 
-    /* ─── Project Cards ────────────────────────────────────────────────────────── */
-    .project-card {
-        background: rgba(31, 41, 55, 0.5);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(55, 65, 81, 0.4);
-        border-radius: 1rem;
-        overflow: hidden;
-        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    @media (max-width: 639px) {
+        .timeline-track::before { display: none; }
     }
 
-    .project-card:hover {
-        border-color: rgba(20, 184, 166, 0.4);
-        box-shadow: 0 0 60px rgba(20, 184, 166, 0.09), 0 30px 60px rgba(0, 0, 0, 0.5);
-        transform: translateY(-6px);
-    }
-
-    .project-card:hover .project-icon-wrap {
-        box-shadow: 0 0 30px rgba(20, 184, 166, 0.4);
-    }
-
-    /* ─── Scroll Reveal ──────────────────────────────────────────────────────── */
+    /* ─── Scroll reveal ───────────────────────────────────────────────────── */
+    /* Hidden until app.js reveals it; .visible is the reduced-motion / fallback state.
+       The <noscript> style in the layout makes these visible without JavaScript. */
     .reveal {
         opacity: 0;
-        transform: translateY(28px);
-        transition: opacity 0.75s ease, transform 0.75s ease;
+        transform: translateY(16px);
     }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.visible { opacity: 1; transform: none; }
 
-    .reveal-left {
-        opacity: 0;
-        transform: translateX(-28px);
-        transition: opacity 0.75s ease, transform 0.75s ease;
-    }
-    .reveal-left.visible { opacity: 1; transform: translateX(0); }
-
-    .reveal-right {
-        opacity: 0;
-        transform: translateX(28px);
-        transition: opacity 0.75s ease, transform 0.75s ease;
-    }
-    .reveal-right.visible { opacity: 1; transform: translateX(0); }
-
-    /* ─── Animations ─────────────────────────────────────────────────────────── */
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50%       { transform: translateY(-14px); }
-    }
-
-    @keyframes float-b {
-        0%, 100% { transform: translateY(0px) rotate(-3deg); }
-        50%       { transform: translateY(-12px) rotate(3deg); }
-    }
-
-    @keyframes pulse-ring {
-        0%   { transform: scale(1); opacity: 0.7; }
-        100% { transform: scale(2.2); opacity: 0; }
-    }
-
-    @keyframes gradient-flow {
-        0%   { background-position: 0% 50%; }
-        50%  { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    @keyframes blink-cursor {
-        0%, 100% { opacity: 1; }
-        50%       { opacity: 0; }
-    }
-
-    @keyframes spin-slow {
-        from { transform: rotate(0deg); }
-        to   { transform: rotate(360deg); }
-    }
-
-    @keyframes orbit {
-        from { transform: rotate(0deg) translateX(110px) rotate(0deg); }
-        to   { transform: rotate(360deg) translateX(110px) rotate(-360deg); }
-    }
-
+    /* ─── Hero entrance (CSS only; neutralised under reduced motion) ──────── */
     @keyframes fade-up {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
+        from { opacity: 0; transform: translateY(14px); }
+        to   { opacity: 1; transform: none; }
     }
-
-    @keyframes hero-glow {
-        0%, 100% { opacity: 0.5; }
-        50%       { opacity: 0.9; }
-    }
-
-    .animate-float   { animation: float 5.5s ease-in-out infinite; }
-    .animate-float-b { animation: float-b 7s ease-in-out infinite 1.5s; }
-    .animate-float-c { animation: float 6.5s ease-in-out infinite 3s; }
-    .animate-pulse-ring { animation: pulse-ring 1.8s ease-out infinite; }
-    .animate-gradient { animation: gradient-flow 6s ease infinite; background-size: 300% 300%; }
-    .animate-blink { animation: blink-cursor 1s step-end infinite; }
-    .animate-spin-slow { animation: spin-slow 28s linear infinite; }
-    .animate-fade-up { animation: fade-up 0.8s ease forwards; }
-    .animate-hero-glow { animation: hero-glow 3s ease-in-out infinite; }
-
-    /* Stagger delays */
-    .delay-100 { animation-delay: 0.1s; }
-    .delay-200 { animation-delay: 0.2s; }
-    .delay-300 { animation-delay: 0.3s; }
-    .delay-400 { animation-delay: 0.4s; }
-    .delay-500 { animation-delay: 0.5s; }
-    .delay-600 { animation-delay: 0.6s; }
-    .delay-700 { animation-delay: 0.7s; }
-    .delay-800 { animation-delay: 0.8s; }
-
-    /* Available dot pulse */
-    .avail-dot {
-        position: relative;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #22C55E;
-        display: inline-block;
-    }
-    .avail-dot::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: 50%;
-        background: #22C55E;
-        animation: pulse-ring 1.8s ease-out infinite;
-    }
-
-    /* Glow decorators */
-    .hero-glow-teal {
-        position: absolute;
-        width: 600px;
-        height: 600px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(20, 184, 166, 0.12) 0%, transparent 70%);
-        pointer-events: none;
-    }
-
-    .hero-glow-blue {
-        position: absolute;
-        width: 500px;
-        height: 500px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-        pointer-events: none;
-    }
-
-    /* Section label */
-    .section-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.25rem 0.875rem;
-        border-radius: 9999px;
-        font-size: 0.8125rem;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        background: rgba(20, 184, 166, 0.1);
-        border: 1px solid rgba(20, 184, 166, 0.25);
-        color: #14B8A6;
-        margin-bottom: 1rem;
-    }
-
-    /* ─── 3D Tilt + Perspective ──────────────────────────────────────────────── */
-    .tilt-grid {
-        perspective: 1200px;
-    }
-
-    [data-tilt] {
-        transform-style: preserve-3d;
-        will-change: transform;
-    }
-
-    [data-tilt] > * {
-        transform: translateZ(0.01px);
-    }
-
-    /* Inner sheen that follows the tilt for extra depth */
-    [data-tilt]::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: linear-gradient(135deg, rgba(255,255,255,0.06), transparent 45%);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-        pointer-events: none;
-    }
-
-    [data-tilt]:hover::after {
-        opacity: 1;
-    }
-
-    /* Magnetic buttons need to sit above for transform room */
-    [data-magnetic] {
-        will-change: transform;
-    }
-
-    /* Floating tech icons (hero) */
-    .tech-icon {
-        position: absolute;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.5rem 0.875rem;
-        border-radius: 0.75rem;
-        font-size: 0.8125rem;
-        font-weight: 600;
-        font-family: 'JetBrains Mono', ui-monospace, monospace;
-        color: #9CA3AF;
-        background: rgba(31, 41, 55, 0.55);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(55, 65, 81, 0.5);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-        z-index: 1;
-        pointer-events: none;
-        user-select: none;
-    }
-
-    /* Skill chip */
-    .skill-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        padding: 0.375rem 0.875rem;
-        border-radius: 9999px;
-        font-size: 0.8125rem;
-        font-weight: 500;
-        background: rgba(31, 41, 55, 0.7);
-        border: 1px solid rgba(55, 65, 81, 0.5);
-        color: #9CA3AF;
-        transition: all 0.2s ease;
-        white-space: nowrap;
-    }
-
-    /* AI-assisted work: dashed outline. Always paired with a visible text label, never the only signal. */
-    .skill-chip-assisted {
-        border-style: dashed;
-        border-color: rgba(139, 92, 246, 0.45);
-    }
-
-    .skill-chip:hover {
-        background: rgba(20, 184, 166, 0.1);
-        border-color: rgba(20, 184, 166, 0.35);
-        color: #14B8A6;
-        transform: translateY(-1px);
-    }
+    .animate-fade-up { animation: fade-up 0.55s ease-out both; }
+    .delay-100 { animation-delay: 0.06s; }
+    .delay-200 { animation-delay: 0.12s; }
+    .delay-300 { animation-delay: 0.18s; }
+    .delay-400 { animation-delay: 0.24s; }
 }
 
 /* ─── Reduced motion ─────────────────────────────────────────────────────── */
-/* JS skips GSAP/Lenis/particles; this stops the CSS keyframe and transition motion too. */
+/* JS skips Lenis and GSAP; this stops the CSS keyframe and transition motion too. */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
         animation-duration: 0.01ms !important;
+        animation-delay: 0s !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;

@@ -7,9 +7,9 @@
 
             {{-- Logo --}}
             <a @click.prevent="scrollTo('hero')" href="#hero"
-               class="flex items-center gap-2.5 group cursor-pointer select-none">
-                <div class="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm text-white transition-all duration-300 group-hover:scale-105"
-                     style="background:linear-gradient(135deg,#14B8A6,#3B82F6);box-shadow:0 0 18px rgba(20,184,166,0.4);">
+               class="flex items-center gap-2.5 py-1 cursor-pointer select-none">
+                <div class="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm text-white"
+                     style="background:linear-gradient(135deg,#0F766E,#1D4ED8);">
                     NM
                 </div>
                 <span class="font-semibold text-white text-sm hidden sm:block md:hidden lg:block">
@@ -18,7 +18,7 @@
             </a>
 
             {{-- Desktop Nav --}}
-            <div class="hidden md:flex items-center gap-6">
+            <div class="hidden md:flex items-center gap-5 lg:gap-6">
                 @foreach ([['hero','Home'],['experience','Experience'],['case-study','Case Study'],['skills','Skills'],['projects','Projects'],['about','About'],['contact','Contact']] as [$id,$label])
                 <a @click.prevent="scrollTo('{{ $id }}')"
                    href="#{{ $id }}"
@@ -30,12 +30,12 @@
             {{-- Resume + Mobile Toggle --}}
             <div class="flex items-center gap-3">
                 <a href="{{ asset('resume/Niroj_Resume.pdf') }}" download
-                   class="hidden sm:inline-flex btn-primary text-sm px-4 py-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="hidden sm:inline-flex btn-primary btn-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
-                    Resume
+                    Résumé
                 </a>
 
                 {{-- Mobile hamburger --}}
@@ -43,11 +43,11 @@
                         class="md:hidden flex flex-col items-center justify-center gap-1.5 w-11 h-11 rounded-lg transition-colors hover:bg-white/5"
                         aria-label="Toggle menu" aria-controls="mobile-menu"
                         :aria-expanded="mobileOpen.toString()" aria-expanded="false">
-                    <span :class="mobileOpen ? 'rotate-45 translate-y-2' : ''"
+                    <span aria-hidden="true" :class="mobileOpen ? 'rotate-45 translate-y-2' : ''"
                           class="block w-5 h-0.5 bg-gray-300 transition-all duration-200 origin-center rounded"></span>
-                    <span :class="mobileOpen ? 'opacity-0 scale-x-0' : ''"
+                    <span aria-hidden="true" :class="mobileOpen ? 'opacity-0 scale-x-0' : ''"
                           class="block w-5 h-0.5 bg-gray-300 transition-all duration-200 rounded"></span>
-                    <span :class="mobileOpen ? '-rotate-45 -translate-y-2' : ''"
+                    <span aria-hidden="true" :class="mobileOpen ? '-rotate-45 -translate-y-2' : ''"
                           class="block w-5 h-0.5 bg-gray-300 transition-all duration-200 origin-center rounded"></span>
                 </button>
             </div>
@@ -68,18 +68,19 @@
             @foreach ([['hero','Home'],['experience','Experience'],['case-study','Case Study'],['skills','Skills'],['projects','Projects'],['about','About'],['contact','Contact']] as [$id,$label])
             <a @click.prevent="scrollTo('{{ $id }}')"
                href="#{{ $id }}"
-               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors text-sm font-medium">
+               :class="activeSection === '{{ $id }}' ? 'text-teal-300 bg-white/5' : 'text-gray-300'"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg hover:text-white hover:bg-white/5 transition-colors text-base font-medium">
                 {{ $label }}
             </a>
             @endforeach
             <div class="pt-2 border-t border-gray-800/50 mt-1">
                 <a href="{{ asset('resume/Niroj_Resume.pdf') }}" download
-                   class="btn-primary w-full justify-center text-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="btn-primary w-full">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
-                    Download Resume
+                    Download Résumé
                 </a>
             </div>
         </div>
