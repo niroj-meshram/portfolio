@@ -1,4 +1,3 @@
-import './bootstrap';
 import Alpine from 'alpinejs';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -7,40 +6,23 @@ import Lenis from 'lenis';
 gsap.registerPlugin(ScrollTrigger);
 window.Alpine = Alpine;
 
+/* ─── Section scrolling (navbar, footer and in-page links all use this) ── */
+// Lenis when it is running; otherwise native scrolling, instant under reduced motion.
+// Sections carry `scroll-mt-16` so native jumps clear the fixed navbar.
+window.scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (window.__lenis) {
+        window.__lenis.scrollTo(el, { offset: -10, duration: 1.4 });
+    } else {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+    }
+};
+
 /* ════════════════════════════════════════════════════════════════════════
    ALPINE COMPONENTS
 ════════════════════════════════════════════════════════════════════════ */
-
-/* ─── Typed Role Text ──────────────────────────────────────────────────── */
-Alpine.data('roleTyper', () => ({
-    roles: ['Full Stack Developer', 'Software Engineer', 'Laravel Developer', 'SaaS Application Engineer'],
-    currentIndex: 0,
-    displayText: '',
-    isDeleting: false,
-    typingSpeed: 90,
-    deletingSpeed: 45,
-    pauseDelay: 2200,
-    _timer: null,
-
-    init() { this._tick(); },
-
-    _tick() {
-        const current = this.roles[this.currentIndex];
-        this.displayText = this.isDeleting
-            ? current.slice(0, this.displayText.length - 1)
-            : current.slice(0, this.displayText.length + 1);
-
-        if (!this.isDeleting && this.displayText === current) {
-            this._timer = setTimeout(() => { this.isDeleting = true; this._tick(); }, this.pauseDelay);
-            return;
-        }
-        if (this.isDeleting && this.displayText === '') {
-            this.isDeleting = false;
-            this.currentIndex = (this.currentIndex + 1) % this.roles.length;
-        }
-        this._timer = setTimeout(() => this._tick(), this.isDeleting ? this.deletingSpeed : this.typingSpeed);
-    },
-}));
 
 /* ─── Navbar ───────────────────────────────────────────────────────────── */
 Alpine.data('navbar', () => ({
@@ -55,7 +37,8 @@ Alpine.data('navbar', () => ({
 
     _onScroll() {
         this.scrolled = window.scrollY > 40;
-        const sections = ['hero', 'about', 'experience', 'skills', 'projects', 'education', 'contact'];
+        // Must match the page order of the sections (checked from last to first).
+        const sections = ['hero', 'experience', 'case-study', 'skills', 'projects', 'about', 'contact'];
         const offset = 100;
         for (let i = sections.length - 1; i >= 0; i--) {
             const el = document.getElementById(sections[i]);
@@ -65,26 +48,37 @@ Alpine.data('navbar', () => ({
 
     scrollTo(id) {
         this.mobileOpen = false;
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (window.__lenis) window.__lenis.scrollTo(el, { offset: -10, duration: 1.4 });
-        else el.scrollIntoView({ behavior: 'smooth' });
+        window.scrollToSection(id);
     },
 }));
 
-/* ─── Contact Form ─────────────────────────────────────────────────────── */
-Alpine.data('contactForm', () => ({
-    form: { name: '', email: '', subject: '', message: '' },
-    submitted: false,
-    submitting: false,
+/* ─── Copy Email ───────────────────────────────────────────────────────── */
+Alpine.data('copyEmail', (email) => ({
+    email,
+    copied: false,
+    failed: false,
+    status: '',
+    _timer: null,
 
-    async submit() {
-        this.submitting = true;
-        await new Promise(r => setTimeout(r, 1200));
-        this.submitted = true;
-        this.submitting = false;
-        this.form = { name: '', email: '', subject: '', message: '' };
-        setTimeout(() => (this.submitted = false), 5000);
+    async copy() {
+        let ok = false;
+        try {
+            await navigator.clipboard.writeText(this.email);
+            ok = true;
+        } catch {
+            // Clipboard API needs a secure context; fall back to a temporary textarea.
+            const ta = Object.assign(document.createElement('textarea'), { value: this.email, readOnly: true });
+            ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+            document.body.appendChild(ta);
+            ta.select();
+            try { ok = document.execCommand('copy'); } catch { ok = false; }
+            ta.remove();
+        }
+        this.copied = ok;
+        this.failed = !ok;
+        this.status = ok ? 'Email address copied to clipboard.' : 'Could not copy automatically. Please copy the address above.';
+        clearTimeout(this._timer);
+        this._timer = setTimeout(() => { this.copied = false; this.failed = false; this.status = ''; }, 4000);
     },
 }));
 
@@ -106,8 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Just make everything visible, skip motion
         document.querySelectorAll('.reveal, .reveal-left, .reveal-right, [data-animate]')
             .forEach(el => el.classList.add('visible'));
-        runCountersImmediately();
-        fillSkillBarsImmediately();
         return;
     }
 
@@ -115,8 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollReveals();
     initSectionTitles();
     initTimeline();
-    initSkillBars();
-    initCounters();
     initParallax();
     initTiltCards();
     initMagneticButtons();
@@ -186,10 +176,6 @@ function initHeroIntro() {
     if (avatar) {
         gsap.from(avatar, { scale: 0.86, opacity: 0, rotate: -6, duration: 1.2, ease: 'expo.out', delay: 0.2 });
     }
-    // Floating stat badges drift in
-    gsap.from(hero.querySelectorAll('.glass-card'), {
-        scale: 0.6, opacity: 0, duration: 0.8, ease: 'back.out(1.7)', stagger: 0.12, delay: 0.7,
-    });
     // Floating tech chips fade in
     gsap.from(hero.querySelectorAll('.tech-icon'), {
         opacity: 0, scale: 0.5, duration: 0.6, stagger: 0.08, delay: 0.9, ease: 'power2.out',
@@ -296,39 +282,6 @@ function initTimeline() {
     });
 }
 
-/* ─── Skill Bars ───────────────────────────────────────────────────────── */
-function initSkillBars() {
-    gsap.utils.toArray('.skill-bar-fill[data-width]').forEach((bar) => {
-        const delay = (parseInt(bar.dataset.delay || '0')) / 1000;
-        gsap.fromTo(bar, { width: '0%' }, {
-            width: bar.dataset.width + '%', duration: 1.4, delay, ease: 'power2.out',
-            scrollTrigger: { trigger: bar, start: 'top 92%' },
-        });
-    });
-}
-function fillSkillBarsImmediately() {
-    document.querySelectorAll('.skill-bar-fill[data-width]').forEach(b => b.style.width = b.dataset.width + '%');
-}
-
-/* ─── Animated Counters ────────────────────────────────────────────────── */
-function initCounters() {
-    gsap.utils.toArray('[data-counter]').forEach((el) => {
-        const target = parseInt(el.dataset.counter);
-        const suffix = el.dataset.suffix || '';
-        const obj = { val: 0 };
-        gsap.to(obj, {
-            val: target, duration: 2, ease: 'power2.out',
-            onUpdate: () => { el.textContent = Math.floor(obj.val) + suffix; },
-            scrollTrigger: { trigger: el, start: 'top 90%' },
-        });
-    });
-}
-function runCountersImmediately() {
-    document.querySelectorAll('[data-counter]').forEach(el => {
-        el.textContent = el.dataset.counter + (el.dataset.suffix || '');
-    });
-}
-
 /* ─── Parallax (hero glows, floating chips, section meshes) ────────────── */
 function initParallax() {
     gsap.utils.toArray('[data-parallax]').forEach((el) => {
@@ -387,12 +340,12 @@ function initMagneticButtons() {
 /* ─── Canvas Particles ─────────────────────────────────────────────────── */
 function initParticles() {
     const canvas = document.getElementById('particles-canvas');
-    if (!canvas) return;
+    if (!canvas || prefersReduced) return;
     const ctx = canvas.getContext('2d');
     const colors = ['#14B8A6', '#3B82F6', '#8B5CF6'];
     let W = canvas.width = innerWidth, H = canvas.height = innerHeight;
 
-    const particles = Array.from({ length: prefersReduced ? 0 : 55 }, () => ({
+    const particles = Array.from({ length: 55 }, () => ({
         x: Math.random() * W, y: Math.random() * H,
         vx: (Math.random() - 0.5) * 0.45, vy: (Math.random() - 0.5) * 0.45,
         r: Math.random() * 1.8 + 0.4,
