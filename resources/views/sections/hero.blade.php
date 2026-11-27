@@ -11,7 +11,7 @@
             <div class="min-w-0">
                 <p class="inline-flex items-center gap-2.5 mb-6 animate-fade-up">
                     <span class="avail-dot flex-shrink-0" aria-hidden="true"></span>
-                    <span class="text-green-400 text-sm font-medium">Open to full-time remote roles &amp; freelance projects</span>
+                    <span class="text-green-400 text-sm font-medium">Open to full-time remote roles &amp; contract work</span>
                 </p>
 
                 <p class="text-gray-400 text-base font-medium mb-2 animate-fade-up delay-100">Hi, I'm</p>
@@ -22,22 +22,23 @@
                 </h1>
 
                 <p class="text-gray-200 text-lg sm:text-xl font-semibold mb-5 animate-fade-up delay-200">
-                    Full Stack Developer · <span class="whitespace-nowrap">Backend-focused</span>
+                    Backend-focused full-stack engineer · <span class="whitespace-nowrap">Laravel · AWS</span>
                 </p>
 
                 <div class="max-w-xl animate-fade-up delay-200">
                     <p class="text-gray-300 text-base sm:text-lg leading-relaxed mb-4">
-                        I build and maintain web applications with a focus on the backend, mainly in
-                        <strong class="text-white font-semibold">PHP and Laravel</strong>, and develop frontends in
-                        <strong class="text-white font-semibold">React and TypeScript</strong>. At Bacancy I build Laravel and
-                        Filament applications, and develop features across the Laravel backend and React frontend of an
-                        enterprise SaaS platform, where I also handle <strong class="text-white font-semibold">AWS production support</strong>.
+                        I'm the sole developer of a multi-tenant SaaS platform that housing associations use to plan and
+                        budget maintenance across thousands of rental homes: <strong class="text-white font-semibold">Laravel</strong>
+                        backend, <strong class="text-white font-semibold">React and TypeScript</strong> frontend, MySQL, and
+                        <strong class="text-white font-semibold">AWS</strong>. I cut its main overview load time by about 97%,
+                        fixed cost-engine bugs that were silently zeroing budget lines, and run its production infrastructure.
                     </p>
                     <p class="text-gray-400 text-base leading-relaxed mb-6">
-                        5+ years across SaaS billing, admin platforms, mobile app backends and client web projects.
+                        5+ years building SaaS billing workflows, subscription payments and admin platforms at Bacancy,
+                        Entrata and Sofmen Technologies.
                     </p>
                     <ul role="list" class="flex flex-wrap gap-2 mb-8" aria-label="Core technologies">
-                        @foreach(['PHP','Laravel','React','JavaScript','TypeScript','Node.js','MySQL','AWS'] as $t)
+                        @foreach(['PHP','Laravel','MySQL','AWS','React','TypeScript'] as $t)
                         <li class="skill-chip">{{ $t }}</li>
                         @endforeach
                     </ul>
@@ -95,7 +96,7 @@
                         ['Focus', 'PHP and Laravel backends · React and TypeScript frontends'],
                         ['Cloud', 'AWS production operations'],
                         ['Location', 'Ahmedabad, India · IST (UTC+5:30)'],
-                        ['Open to', 'Full-time remote roles · Freelance projects'],
+                        ['Open to', 'Full-time remote roles · Contract work'],
                     ] as [$term, $value])
                     <div class="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-3 {{ $loop->first ? '' : 'pt-4 border-t border-gray-700/50' }}">
                         <dt class="text-gray-400">{{ $term }}</dt>

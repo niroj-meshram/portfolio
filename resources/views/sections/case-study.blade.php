@@ -19,37 +19,17 @@
             </p>
         </header>
 
-        {{-- Overview --}}
+        {{-- Context (replaces the former Overview and Key features blocks) --}}
         <div class="glass-card p-6 sm:p-8 mb-6 reveal">
-            <h3 class="card-title mb-3">Overview</h3>
+            <h3 class="card-title mb-3">Context</h3>
             <p class="text-gray-300 leading-relaxed max-w-3xl">
-                A multi-tenant web platform that housing associations and their contractors use to plan, cost and approve
-                long-term maintenance across thousands of rental homes. It replaces spreadsheet-based planning: users manage
-                their property portfolios in one place, build maintenance scenarios over a multi-year horizon, and turn
-                them into approved budgets with full cost breakdowns.
+                A multi-tenant platform that housing associations and their contractors use to plan, cost and approve
+                long-term maintenance across thousands of rental homes, replacing spreadsheet-based planning. It manages
+                property portfolios, multi-year maintenance scenarios, versioned price catalogues with tens of thousands of
+                line items, and an approval workflow between contractors and housing associations.
             </p>
             <p class="text-gray-400 text-sm mt-3">The client and product names are withheld for confidentiality.</p>
         </div>
-
-        {{-- Key features --}}
-        <article class="glass-card p-6 sm:p-8 mb-6 reveal">
-            <h3 class="card-title mb-5">Key features</h3>
-            <dl class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                @foreach([
-                    ['Portfolio management', 'Building complexes and individual rental units, with property details, energy labels, photos and an interactive map view.'],
-                    ['Scenario planning', 'Multiple maintenance scenarios per project, with yearly cost projections, inflation and indexation, cost cycles, and comparisons by theme, building element and maintenance type.'],
-                    ['Price catalogues', 'Versioned unit-price lists with tens of thousands of line items, VAT handling and configurable surcharge matrices that calculate overhead costs.'],
-                    ['Approval workflow', 'Role-based collaboration between contractors and housing associations. Scenarios move through review phases, and price changes are flagged for approval.'],
-                    ['Reporting and exports', 'Excel and PDF reports, production-plan exports and a nightly business-intelligence pipeline for management reporting.'],
-                    ['Bulk data import', 'Large spreadsheet imports for units, prices and scenarios, validated before anything is saved.'],
-                ] as [$feature, $text])
-                <div class="panel p-4">
-                    <dt class="text-white font-semibold text-sm mb-1">{{ $feature }}</dt>
-                    <dd class="text-gray-400 text-sm leading-relaxed">{{ $text }}</dd>
-                </div>
-                @endforeach
-            </dl>
-        </article>
 
         <div class="grid lg:grid-cols-2 gap-6 mb-6">
             {{-- My role --}}
@@ -89,15 +69,55 @@
             </article>
         </div>
 
-        {{-- Highlights: performance gains as percentages, never seconds (see the note at the top of this file) --}}
+        {{-- Two problems I solved: each part uses only details the user supplied. Sentences that depended on
+             unanswered questions (how the failures were found, why the geocoding failed silently, the core overview
+             query change, trade-offs, whether the backfill has run in production) were left out on purpose:
+             don't fill them in without the user's answers. Percentages only, never seconds. --}}
+        <div class="mt-10 mb-6">
+            <h3 class="group-title mb-5 reveal">Two problems I solved</h3>
+            <div class="grid lg:grid-cols-2 gap-6">
+                @foreach([
+                    [
+                        'title' => 'Recovering location data missing for two years',
+                        'parts' => [
+                            'Problem' => 'The platform\'s map view depends on property coordinates, but 57% of properties had none.',
+                            'Investigation' => 'I traced it to the geocoding integration, which had been failing silently for about two years.',
+                            'Decision' => 'Instead of a one-off script, I built a resumable backfill, so it can stop and continue safely across a large dataset.',
+                            'Result' => 'The backfill can recover 99.8% of the missing locations.',
+                        ],
+                    ],
+                    [
+                        'title' => 'Making the heaviest screens fast',
+                        'parts' => [
+                            'Problem' => 'The project overview slowed down as clients added projects and price items, because the query behind it grew with both. Budget screens were also issuing far more database queries than needed.',
+                            'Investigation' => 'The budget screens had N+1 lazy-loading patterns and joins that produced duplicate rows.',
+                            'Decision' => 'I added server-side pagination, and on the budget screens replaced lazy loading with eager loading and removed the duplicate-row joins.',
+                            'Result' => 'Project-overview load time cut by about 97%; database queries per page down 93%; budget-screen response times down 50%.',
+                        ],
+                    ],
+                ] as $story)
+                <article class="glass-card p-6 sm:p-8 reveal" @if(! $loop->first) data-delay="80" @endif>
+                    <h4 class="card-title mb-5">{{ $story['title'] }}</h4>
+                    <dl class="space-y-4">
+                        @foreach($story['parts'] as $label => $text)
+                        <div>
+                            <dt class="meta-label mb-1">{{ $label }}</dt>
+                            <dd class="{{ $label === 'Result' ? 'text-teal-300 font-medium' : 'text-gray-300' }} text-sm leading-relaxed">{{ $text }}</dd>
+                        </div>
+                        @endforeach
+                    </dl>
+                </article>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Other highlights: performance gains as percentages, never seconds (see the note at the top of this file).
+             The overview, query-count and location-data items now live in the two stories above. --}}
         <article class="glass-card p-6 sm:p-8 mb-6 reveal">
-            <h3 class="card-title mb-5">Highlights</h3>
+            <h3 class="card-title mb-5">Other highlights</h3>
             <dl class="grid md:grid-cols-2 gap-x-8 gap-y-6">
                 @foreach([
-                    ['Faster project overview', 'Cut load time by about 97% by reworking a query that grew with the number of projects and price items, and added server-side pagination.'],
                     ['Faster spreadsheet imports', 'Made processing about 93% faster with a streaming parser that matches the previous output exactly. This fixed imports that were timing out.'],
-                    ['Fewer database queries', 'Reduced queries per page by 93% and cut response times on budget screens by 50% by removing duplicate-row joins and N+1 lazy-loading patterns.'],
-                    ['Location data recovery', 'Found a geocoding integration that had been failing silently for about two years and left 57% of properties without coordinates. Built a resumable backfill that can recover 99.8% of the missing locations.'],
                     ['Calculation correctness', 'Found and fixed edge cases in the cost engine, including VAT splits, surcharge bases and missing cycle factors that were quietly zeroing budget lines.'],
                     ['Security review', 'Ran a full security review covering endpoint protection, authorisation and cross-site scripting, and prioritised the fixes.'],
                     ['Infrastructure', 'Upgraded the runtime platform before its end of life with no downtime, and cut monitoring costs by consolidating redundant alerts.'],
