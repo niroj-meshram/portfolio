@@ -12,8 +12,8 @@
          @section('title', '...') already HTML-escapes its content, hence the raw echo. --}}
     @php
         $siteUrl = 'https://nirojdev.in';
-        $metaTitle = trim($__env->yieldContent('title')) ?: e('Niroj Meshram · Full Stack Developer · Backend-focused');
-        $metaDescription = trim($__env->yieldContent('description')) ?: e('Backend-focused Full Stack Developer: 5+ years in PHP and Laravel, plus React, TypeScript and AWS production support. Open to remote and freelance roles.');
+        $metaTitle = trim($__env->yieldContent('title')) ?: e('Niroj Meshram · Backend-focused Full-Stack Engineer');
+        $metaDescription = trim($__env->yieldContent('description')) ?: e('Backend-focused full-stack engineer: 5+ years in PHP and Laravel, plus React, TypeScript, MySQL and AWS. Open to full-time remote roles and contract work.');
     @endphp
     <title>{!! $metaTitle !!}</title>
     <meta name="description" content="{!! $metaDescription !!}">
@@ -59,7 +59,7 @@
                 "@@type": "ProfilePage",
                 "@@id": "{{ $siteUrl }}/#profile",
                 "url": "{{ $siteUrl }}/",
-                "name": "Niroj Meshram · Full Stack Developer · Backend-focused",
+                "name": "Niroj Meshram · Backend-focused Full-Stack Engineer",
                 "inLanguage": "en",
                 "isPartOf": { "@@id": "{{ $siteUrl }}/#website" },
                 "mainEntity": { "@@id": "{{ $siteUrl }}/#person" }
@@ -73,7 +73,7 @@
                     "@@type": "Organization",
                     "name": "Bacancy Software LLP"
                 },
-                "description": "Backend-focused Full Stack Developer with 5+ years of experience in PHP and Laravel, who also develops React and TypeScript frontends and runs AWS production operations.",
+                "description": "Backend-focused full-stack engineer with 5+ years of experience in PHP and Laravel, who also develops React and TypeScript frontends and runs AWS production operations.",
                 "email": "nirojmeshram@gmail.com",
                 "url": "{{ $siteUrl }}/",
                 "address": {

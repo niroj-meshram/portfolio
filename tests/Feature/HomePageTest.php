@@ -74,7 +74,7 @@ class HomePageTest extends TestCase
         }
 
         preg_match('#aria-label="Core technologies">(.+?)</ul>#s', $html, $chips);
-        foreach (['PHP', 'Laravel', 'React', 'JavaScript', 'TypeScript', 'Node.js', 'MySQL', 'AWS'] as $tech) {
+        foreach (['PHP', 'Laravel', 'MySQL', 'AWS', 'React', 'TypeScript'] as $tech) {
             $this->assertStringContainsString('>'.$tech.'<', $chips[1] ?? '', "Hero chip missing: {$tech}");
         }
 

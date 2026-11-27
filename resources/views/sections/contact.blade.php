@@ -6,7 +6,7 @@
         <header class="section-head reveal">
             <h2 class="section-title">Let's Work Together</h2>
             <p class="section-lead">
-                Open to full-time remote roles and freelance projects. If your team needs a
+                Open to full-time remote roles and contract work. If your team needs a
                 <strong class="text-gray-200 font-semibold">backend-focused Full Stack Developer</strong> with PHP, Laravel
                 and React experience and AWS production support, email is the best way to reach me.
             </p>
