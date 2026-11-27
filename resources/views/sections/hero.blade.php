@@ -27,16 +27,17 @@
 
                 <div class="max-w-xl animate-fade-up delay-200">
                     <p class="text-gray-300 text-base sm:text-lg leading-relaxed mb-4">
-                        I build and support web applications with a focus on the backend, mainly in
-                        <strong class="text-white font-semibold">PHP and Laravel</strong>. At Bacancy I deliver features on an
-                        enterprise SaaS platform built with Symfony and Next.js through an AI-assisted workflow, and I handle
-                        its <strong class="text-white font-semibold">AWS production support hands-on</strong>.
+                        I build and maintain web applications with a focus on the backend, mainly in
+                        <strong class="text-white font-semibold">PHP and Laravel</strong>, and develop frontends in
+                        <strong class="text-white font-semibold">React and TypeScript</strong>. At Bacancy I build Laravel and
+                        Filament applications, and develop features across the Laravel backend and React frontend of an
+                        enterprise SaaS platform, where I also handle <strong class="text-white font-semibold">AWS production support</strong>.
                     </p>
                     <p class="text-gray-400 text-base leading-relaxed mb-6">
                         5+ years across SaaS billing, admin platforms, mobile app backends and client web projects.
                     </p>
-                    <ul role="list" class="flex flex-wrap gap-2 mb-8" aria-label="Core hands-on stack">
-                        @foreach(['PHP','Laravel','Filament','Vue.js','MySQL','AWS'] as $t)
+                    <ul role="list" class="flex flex-wrap gap-2 mb-8" aria-label="Core technologies">
+                        @foreach(['PHP','Laravel','React','JavaScript','TypeScript','Node.js','MySQL','AWS'] as $t)
                         <li class="skill-chip">{{ $t }}</li>
                         @endforeach
                     </ul>
@@ -91,8 +92,8 @@
                     @foreach([
                         ['Current role', 'Software Engineer, Bacancy'],
                         ['Previously', 'Entrata · Sofmen Technologies'],
-                        ['Focus', 'Backend development in PHP and Laravel'],
-                        ['Cloud', 'AWS production support, hands-on'],
+                        ['Focus', 'PHP and Laravel backends · React and TypeScript frontends'],
+                        ['Cloud', 'AWS production operations'],
                         ['Location', 'Ahmedabad, India · IST (UTC+5:30)'],
                         ['Open to', 'Full-time remote roles · Freelance projects'],
                     ] as [$term, $value])

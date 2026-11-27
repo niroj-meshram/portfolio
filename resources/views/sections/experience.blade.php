@@ -1,5 +1,7 @@
 {{-- EXPERIENCE: the only .timeline-track on the page (app.js initTimeline() scrubs the first one).
-     The rail and dots are hidden below 640px. --}}
+     The rail and dots are hidden below 640px.
+     Bacancy has two separate workstreams: Laravel/Filament development, and the enterprise SaaS platform
+     (Laravel backend, React/TypeScript frontend, AWS). Filament belongs only to the first. Never mention Symfony. --}}
 <section id="experience" class="scroll-mt-16 section" style="background-color:#111827;">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -25,59 +27,64 @@
                     </header>
 
                     <p class="text-gray-300 leading-relaxed mb-6">
-                        My work at Bacancy covers two areas: an enterprise SaaS platform for a client, where I'm the only
-                        active developer from Bacancy, and Filament-based Laravel development.
+                        My work at Bacancy covers two separate workstreams: Laravel and Filament development, and an
+                        enterprise SaaS platform for a client, where I'm the sole developer.
                     </p>
 
+                    {{-- Two separate workstreams. Both use Laravel, but Filament belongs only to the first one: never
+                         attribute Filament to the enterprise SaaS platform. --}}
                     <div class="pt-6 border-t border-gray-700/50">
+                        <h4 class="text-white font-semibold mb-3">Laravel and Filament development</h4>
+                        <ul role="list" class="bullets space-y-2.5 text-gray-400 text-sm leading-relaxed">
+                            <li>Develop Laravel applications with Filament admin panels.</li>
+                            <li>Built custom Filament components and Builder blocks for modular content creation, with flexible field structures and dynamic rendering logic.</li>
+                            <li>Customised Blade views to add search and filtering to Filament block pickers.</li>
+                            <li>Integrated media upload, preview and management into Filament forms using a Filament media library plugin.</li>
+                            <li>Implemented role-based access control with Filament Shield for resource-level authorisation and permission management.</li>
+                        </ul>
+                        <ul role="list" class="flex flex-wrap gap-2 mt-4" aria-label="Laravel and Filament technologies">
+                            @foreach(['PHP','Laravel','Filament','Blade'] as $t)
+                            <li class="skill-chip">{{ $t }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+
+                    <div class="pt-6 mt-6 border-t border-gray-700/50">
                         <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-3">
                             <h4 class="text-white font-semibold">Enterprise SaaS platform <span class="text-gray-400 font-normal">(client project)</span></h4>
                             <a href="#case-study" onclick="return !window.scrollToSection || (scrollToSection('case-study'), false);" class="text-link text-sm">
                                 Read the case study <span aria-hidden="true">→</span>
                             </a>
                         </div>
+                        {{-- Condensed to 5 keyword-led points (user decision); the full detail lives in the case study.
+                             CONFIDENTIAL: no client/product name. Figures are user-approved; performance gains are
+                             percentages, never seconds. --}}
+                        <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                            A multi-tenant platform that housing associations and their contractors use to plan, cost and
+                            approve long-term maintenance across thousands of rental homes.
+                        </p>
                         <ul role="list" class="bullets space-y-2.5 text-gray-400 text-sm leading-relaxed">
-                            <li>Implement features within the platform's existing architecture, which I did not design:
-                                Symfony, API Platform and Doctrine on the backend, and Next.js, React and TypeScript on the
-                                frontend, structured around DDD, CQRS and Hexagonal Architecture.</li>
-                            <li><strong class="text-gray-200 font-semibold">AI-assisted development:</strong> I work from the
-                                business requirement to a technical approach, Claude Code suggests the implementation, and I
-                                review the generated code and test the functionality.</li>
-                            <li><strong class="text-gray-200 font-semibold">Hands-on AWS operations:</strong> production
-                                troubleshooting, infrastructure investigation, monitoring and application support across AWS
-                                Lambda, Amazon SQS, Amazon RDS (MySQL), Amazon S3, Amazon CloudFront and Amazon CloudWatch.</li>
+                            <li><strong class="text-gray-200 font-semibold">Full-stack ownership:</strong> sole developer of the
+                                Laravel (PHP) backend, React and TypeScript frontend, MySQL database and AWS infrastructure.</li>
+                            <li><strong class="text-gray-200 font-semibold">Performance optimisation:</strong> cut project-overview
+                                load time by about 97% through query optimisation and server-side pagination, and reduced database
+                                queries per page by 93% by eliminating N+1 lazy loading, cutting budget-screen response times by 50%.</li>
+                            <li><strong class="text-gray-200 font-semibold">Data processing and integrity:</strong> rebuilt bulk
+                                spreadsheet imports with a streaming parser (about 93% faster, no more timeouts) and fixed
+                                cost-engine calculation bugs in VAT, surcharges and cost cycles.</li>
+                            <li><strong class="text-gray-200 font-semibold">Security and reliability:</strong> ran a full application
+                                security review (authorisation, endpoint protection, XSS) and upgraded the runtime platform before
+                                end of life with zero downtime.</li>
+                            <li><strong class="text-gray-200 font-semibold">AWS production operations:</strong> troubleshooting,
+                                monitoring and infrastructure investigation across Lambda, SQS, RDS (MySQL), S3, CloudFront and
+                                CloudWatch.</li>
+                        </ul>
+                        <ul role="list" class="flex flex-wrap gap-2 mt-4" aria-label="Enterprise SaaS platform technologies">
+                            @foreach(['PHP','Laravel','React','TypeScript','MySQL','AWS Lambda','Amazon SQS','Amazon RDS','Amazon S3','Amazon CloudFront','Amazon CloudWatch'] as $t)
+                            <li class="skill-chip">{{ $t }}</li>
+                            @endforeach
                         </ul>
                     </div>
-
-                    <div class="pt-6 mt-6 border-t border-gray-700/50">
-                        <h4 class="text-white font-semibold mb-3">Filament development</h4>
-                        <ul role="list" class="bullets space-y-2.5 text-gray-400 text-sm leading-relaxed">
-                            <li>Built custom Filament Builder blocks for modular content creation, with flexible field structures and dynamic rendering logic.</li>
-                            <li>Added search and filtering to Filament block pickers through customised Blade view overrides.</li>
-                            <li>Integrated media upload and preview into Filament forms and admin workflows using a Filament media library plugin.</li>
-                            <li>Implemented role-based access control with Filament Shield for resource-level authorisation and permission management.</li>
-                        </ul>
-                    </div>
-
-                    {{-- Involvement is stated in text, not only by chip style --}}
-                    <dl class="mt-6 pt-6 border-t border-gray-700/50 space-y-4">
-                        @foreach([
-                            ['Hands-on', ['PHP','Laravel','Filament'], false],
-                            ['AWS · hands-on', ['Lambda','SQS','RDS','S3','CloudFront','CloudWatch'], false],
-                            ['AI-assisted', ['Symfony','API Platform','Doctrine','Next.js','React','TypeScript'], true],
-                        ] as [$label, $chips, $assisted])
-                        <div class="sm:grid sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-4">
-                            <dt class="meta-label mb-2 sm:mb-0 sm:pt-1.5">{{ $label }}</dt>
-                            <dd>
-                                <ul role="list" class="flex flex-wrap gap-2" aria-label="{{ $label }}">
-                                    @foreach($chips as $t)
-                                    <li class="skill-chip {{ $assisted ? 'skill-chip-assisted' : '' }}">{{ $t }}</li>
-                                    @endforeach
-                                </ul>
-                            </dd>
-                        </div>
-                        @endforeach
-                    </dl>
                 </article>
             </li>
 
