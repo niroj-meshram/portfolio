@@ -1,23 +1,39 @@
 import Alpine from 'alpinejs';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 
 window.Alpine = Alpine;
 
 /* ─── Section scrolling (navbar, footer and in-page links all use this) ── */
-// Lenis when it is running; otherwise native scrolling, instant under reduced motion.
-// Sections carry `scroll-mt-16` so native jumps clear the fixed navbar.
+// Behaves like a native anchor link, only smoother: it scrolls (Lenis when it is running, otherwise
+// native, instant under reduced motion), records the section in the URL so links can be shared and
+// Back/Forward work, and moves focus into the section so the next Tab continues there instead of in
+// the navbar. Sections carry `scroll-mt-16` so native jumps clear the fixed navbar.
+function scrollToElement(el, smooth = true) {
+    if (window.__lenis) {
+        window.__lenis.scrollTo(el, { offset: -10, duration: 1, immediate: !smooth });
+        window.__lenisWake(); // the frame loop sleeps while idle (see initSmoothScroll)
+    } else {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        el.scrollIntoView({ behavior: smooth && !reduce ? 'smooth' : 'auto' });
+    }
+}
+
 window.scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (!el) return;
-    if (window.__lenis) {
-        window.__lenis.scrollTo(el, { offset: -10, duration: 1 });
-    } else {
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
-    }
+    // The hero is the top of the page, so it keeps the clean URL (https://nirojdev.in/)
+    const hash = id === 'hero' ? '' : '#' + id;
+    if (location.hash !== hash) history.pushState(null, '', hash || location.pathname + location.search);
+    scrollToElement(el);
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1'); // focusable from code only
+    el.focus({ preventScroll: true });
 };
+
+// Back/Forward between sections recorded above
+window.addEventListener('popstate', () => {
+    const el = document.getElementById(decodeURIComponent(location.hash.slice(1)) || 'hero');
+    if (el) scrollToElement(el);
+});
 
 /* ════════════════════════════════════════════════════════════════════════
    ALPINE COMPONENTS
@@ -89,6 +105,8 @@ Alpine.start();
    reveal and the experience timeline line. Everything is skipped under
    prefers-reduced-motion, and hidden content is made visible instead.
    The hero entrance is CSS-only (.animate-fade-up).
+   No animation library: the browser's IntersectionObserver and CSS
+   transitions do the work (GSAP + ScrollTrigger were ~46 KB gzipped).
 ════════════════════════════════════════════════════════════════════════ */
 
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -101,25 +119,55 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Registered here, not at import time: registering wakes the GSAP ticker and ScrollTrigger's
-    // rAF loop, which would otherwise keep running (~60 frames/s) under reduced motion too.
-    gsap.registerPlugin(ScrollTrigger);
     initSmoothScroll();
     initScrollReveals();
     initTimeline();
-
-    // Recalculate once images/fonts settle
-    window.addEventListener('load', () => ScrollTrigger.refresh());
 });
 
-/* ─── Lenis smooth scroll (drives ScrollTrigger) ───────────────────────── */
+/* ─── Lenis smooth scroll ──────────────────────────────────────────────── */
 function initSmoothScroll() {
     const lenis = new Lenis({ duration: 1, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
     window.__lenis = lenis;
 
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
+    // Lenis needs a frame loop only while it animates: after a wheel gesture ('virtual-scroll') or a
+    // scrollTo(), until the scroll settles. Touch, keyboard and scrollbar scrolling are native and need
+    // no loop. An always-on loop would wake the main thread ~60 times a second on an idle page.
+    // The clock fed to Lenis advances at most 50 ms per frame, so the first frame after a sleep doesn't
+    // look like one huge time step (which would finish the scroll animation instantly).
+    let running = false, idleFrames = 0, clock = 0, last = 0;
+    const frame = (now) => {
+        clock += Math.min(Math.max(now - last, 0), 50);
+        last = now;
+        lenis.raf(clock);
+        idleFrames = lenis.isScrolling ? 0 : idleFrames + 1;
+        if (idleFrames < 10) requestAnimationFrame(frame);
+        else running = false;
+    };
+    window.__lenisWake = () => {
+        idleFrames = 0;
+        if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+    };
+    lenis.on('virtual-scroll', window.__lenisWake);
+
+    // Lenis takes over scrolling before the browser's own jump to a URL fragment sticks, so a shared
+    // link such as /#case-study would stay at the top. Jump there explicitly, and again after the page
+    // load and the web fonts (their swap reflows the text above the target), unless the visitor has
+    // already started scrolling.
+    const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (target) {
+        let userScrolled = false;
+        for (const type of ['wheel', 'touchstart', 'keydown']) {
+            window.addEventListener(type, () => { userScrolled = true; }, { once: true, passive: true });
+        }
+        const jump = () => {
+            if (userScrolled) return;
+            lenis.scrollTo(target, { offset: -10, immediate: true, force: true });
+            window.__lenisWake();
+        };
+        jump();
+        window.addEventListener('load', jump, { once: true });
+        document.fonts?.ready.then(jump);
+    }
 }
 
 /* ─── Scroll progress bar ──────────────────────────────────────────────── */
@@ -135,30 +183,35 @@ function initScrollProgress() {
 }
 
 /* ─── Reveal on scroll: short fade-up, no blur or sideways motion ───────── */
+// Fires once when an element's top crosses 92% of the viewport height. The fade itself is the CSS
+// transition on .reveal → .reveal.visible; data-delay (ms) staggers neighbouring cards.
 function initScrollReveals() {
-    gsap.utils.toArray('.reveal').forEach((el) => {
-        const delay = (parseInt(el.dataset.delay || '0', 10)) / 1000;
-        gsap.fromTo(el,
-            { y: 16, opacity: 0 },
-            {
-                y: 0, opacity: 1, duration: 0.6, delay, ease: 'power2.out',
-                // Hand over to the CSS end state so no inline transform is left behind
-                onComplete: () => { el.classList.add('visible'); gsap.set(el, { clearProps: 'transform,opacity' }); },
-                scrollTrigger: { trigger: el, start: 'top 92%', once: true },
-            }
-        );
-    });
+    const io = new IntersectionObserver((entries) => {
+        for (const { isIntersecting, target: el } of entries) {
+            if (!isIntersecting) continue;
+            if (el.dataset.delay) el.style.transitionDelay = `${parseInt(el.dataset.delay, 10)}ms`;
+            el.classList.add('visible');
+            io.unobserve(el);
+        }
+    }, { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 }
 
 /* ─── Experience timeline: the connecting line follows the scroll ──────── */
+// Draws the rail (--timeline-scale, 0 → 1) as the track passes a line at 75% of the viewport height:
+// starts when the track's top reaches it, complete when its bottom does. Updated once per frame at most.
 function initTimeline() {
     const track = document.querySelector('.timeline-track');
     if (!track) return;
-    gsap.fromTo(track,
-        { '--timeline-scale': 0 },
-        {
-            '--timeline-scale': 1, ease: 'none',
-            scrollTrigger: { trigger: track, start: 'top 75%', end: 'bottom 75%', scrub: 0.5 },
-        }
-    );
+    let queued = false;
+    const update = () => {
+        queued = false;
+        const r = track.getBoundingClientRect();
+        const progress = Math.min(1, Math.max(0, (window.innerHeight * 0.75 - r.top) / r.height));
+        track.style.setProperty('--timeline-scale', progress.toFixed(4));
+    };
+    const schedule = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
+    update();
 }

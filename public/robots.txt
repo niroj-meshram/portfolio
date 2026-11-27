@@ -1,2 +1,4 @@
 User-agent: *
 Disallow:
+
+Sitemap: https://nirojdev.in/sitemap.xml

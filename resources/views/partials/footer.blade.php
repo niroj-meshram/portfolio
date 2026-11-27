@@ -9,7 +9,7 @@
                          style="background:linear-gradient(135deg,#0F766E,#1D4ED8);">NM</div>
                     <span class="font-semibold text-white">nirojdev<span class="gradient-text">.</span>in</span>
                 </div>
-                <p class="text-gray-400 text-sm">Full Stack Developer · Backend-focused. PHP, Laravel and AWS.</p>
+                <p class="text-gray-400 text-sm">Full Stack Developer · Backend-focused. PHP, Laravel, React and AWS.</p>
             </div>
 
             <nav aria-label="Footer">

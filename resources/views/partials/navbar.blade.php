@@ -1,12 +1,12 @@
-<nav x-data="navbar()"
+<nav x-data="navbar()" aria-label="Primary"
      :class="scrolled ? 'nav-scrolled' : 'bg-transparent'"
      class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 lg:h-18">
 
-            {{-- Logo --}}
-            <a @click.prevent="scrollTo('hero')" href="#hero"
+            {{-- Logo. The label keeps the visible text ("NM", "nirojdev.in") and says where the link goes. --}}
+            <a @click.prevent="scrollTo('hero')" href="#hero" aria-label="NM, nirojdev.in: back to top"
                class="flex items-center gap-2.5 py-1 cursor-pointer select-none">
                 <div class="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm text-white"
                      style="background:linear-gradient(135deg,#0F766E,#1D4ED8);">
@@ -23,6 +23,7 @@
                 <a @click.prevent="scrollTo('{{ $id }}')"
                    href="#{{ $id }}"
                    :class="activeSection === '{{ $id }}' ? 'active' : ''"
+                   :aria-current="activeSection === '{{ $id }}' ? 'true' : false"
                    class="nav-link">{{ $label }}</a>
                 @endforeach
             </div>
@@ -69,6 +70,7 @@
             <a @click.prevent="scrollTo('{{ $id }}')"
                href="#{{ $id }}"
                :class="activeSection === '{{ $id }}' ? 'text-teal-300 bg-white/5' : 'text-gray-300'"
+               :aria-current="activeSection === '{{ $id }}' ? 'true' : false"
                class="flex items-center gap-3 px-4 py-3 rounded-lg hover:text-white hover:bg-white/5 transition-colors text-base font-medium">
                 {{ $label }}
             </a>

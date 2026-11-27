@@ -15,21 +15,29 @@
                     I'm a <strong class="text-white">backend-focused Full Stack Developer</strong> based in Ahmedabad, India,
                     with 5+ years of professional experience. I'm currently a Software Engineer at Bacancy. My strongest area
                     is backend development in <strong class="text-white">PHP and Laravel</strong>: REST APIs, backend services,
-                    Filament admin panels, Stripe payment integrations and database query optimisation.
+                    Filament admin panels, Stripe payment integrations and database query optimisation. On the frontend I
+                    work with <strong class="text-white">React, TypeScript and JavaScript</strong>.
                 </p>
                 <p class="text-gray-400 leading-relaxed">
-                    At Bacancy I'm the only active developer from the company on an enterprise SaaS client platform. I deliver
-                    features within its existing Symfony and Next.js architecture through an AI-assisted workflow: I work out
-                    the requirement and approach, Claude Code suggests the implementation, and I review and test it.
-                    Separately, I handle the platform's production troubleshooting and AWS operations hands-on.
+                    At Bacancy I work in two separate areas. I build Laravel applications with Filament: custom components
+                    and Builder blocks, Blade customisation, search and filtering, media management and role-based access
+                    control. I'm also the sole developer of an enterprise SaaS platform that housing associations use to
+                    plan and budget long-term maintenance, responsible for its Laravel backend, React and TypeScript
+                    frontend, performance, security and AWS infrastructure.
+                </p>
+                <p class="text-gray-400 leading-relaxed">
+                    I use AI-assisted development tools such as Claude Code to accelerate implementation, investigate
+                    technical issues and improve development efficiency while retaining responsibility for technical
+                    decisions, code review and testing.
                 </p>
                 <p class="text-gray-400 leading-relaxed">
                     Before Bacancy, I worked at Entrata on SaaS billing workflows and production issues in a large custom PHP
                     codebase, and at Sofmen Technologies on client web applications using Laravel and CodeIgniter.
                 </p>
                 <p class="text-gray-400 leading-relaxed">
-                    Outside work, I'm exploring retrieval-augmented generation through a personal prototype built with
-                    FastAPI, pgvector and Gemini.
+                    Outside work, I built Oopsie, a Chrome productivity extension in React and TypeScript, to improve my
+                    own daily workflow. I'm also exploring retrieval-augmented generation through a personal prototype
+                    built with FastAPI, pgvector and Gemini.
                 </p>
             </div>
 
